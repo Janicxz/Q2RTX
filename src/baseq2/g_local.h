@@ -547,6 +547,12 @@ extern  cvar_t  *sv_features;
 
 extern  cvar_t  *sv_flaregun;
 
+extern cvar_t* sv_shellcasings;
+extern cvar_t* sv_shellcasings_time;
+extern cvar_t* sv_shellcasings_size;
+extern cvar_t* sv_shellcasings_speed;
+extern cvar_t* sv_shellcasings_volume;
+
 #define world   (&g_edicts[0])
 
 // item spawnflags

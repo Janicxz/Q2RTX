@@ -115,6 +115,64 @@ qboolean fire_hit(edict_t *self, vec3_t aim, int damage, int kick)
     return qtrue;
 }
 
+void shellcasing_touch(edict_t* ent, edict_t* other,
+	cplane_t* plane, csurface_t* surf)
+{
+	//float cl_shellcasings_volume = 0.5f;
+	// world/land.wav brass_hitfloor.wav
+	if (sv_shellcasings_volume->value > 1.0)
+		sv_shellcasings_volume->value = 1.0;
+	if (sv_shellcasings_volume->value < 0)
+		sv_shellcasings_volume->value = 0;
+	gi.sound(ent, CHAN_VOICE, gi.soundindex("misc/brass_hitfloor.wav"), sv_shellcasings_volume->value, ATTN_NORM, 0);
+	//VectorClear(ent->velocity);
+}
+
+static void spawn_shellcasing(edict_t* self, vec3_t start, vec3_t aimdir, int shellcasing_shotgun)
+{
+	//int cl_shellcasings = 1;
+	//int cl_shellcasings_time = 15;
+	//int cl_shellcasings_size = 1;
+	//int cl_shellcasings_speed = 200;
+	char *shellModelName = "models/shells/m_shell.md3";
+
+	if (sv_shellcasings->integer)
+	{
+		// q2rtx_media.pkz
+		if (shellcasing_shotgun)
+			shellModelName = "models/shells/s_shell.md3";
+		edict_t* shell_casing;
+		vec3_t dir;
+		vec3_t forward, right, up;
+
+		vectoangles(aimdir, dir);
+		AngleVectors(dir, forward, right, up);
+		shell_casing = G_Spawn();
+
+		VectorCopy(start, shell_casing->s.origin);
+		vectoangles(right, shell_casing->s.angles);
+		VectorCopy(right, shell_casing->movedir);
+		VectorScale(right, sv_shellcasings_speed->integer, shell_casing->velocity);
+
+		shell_casing->movetype = MOVETYPE_BOUNCE;
+		shell_casing->clipmask = MASK_SHOT;
+		shell_casing->solid = SOLID_BBOX;
+		//VectorScale(shell_casing->size, sv_shellcasings_size->integer, shell_casing->size);
+		//shell_casing->size = sv_shellcasings_size->integer;
+		const float size = 1;
+		VectorSet(shell_casing->mins, -size, -size, -size);
+		VectorSet(shell_casing->maxs, size, size, size);
+
+		shell_casing->s.modelindex = gi.modelindex(shellModelName);
+		shell_casing->owner = self;
+		shell_casing->touch = shellcasing_touch; // too annoying?
+		shell_casing->nextthink = level.time + sv_shellcasings_time->integer;
+		shell_casing->think = G_FreeEdict;
+		shell_casing->radius_dmg = 0;
+		shell_casing->dmg_radius = 0;
+		gi.linkentity(shell_casing);
+	}
+}
 
 /*
 =================
@@ -255,6 +313,7 @@ pistols, rifles, etc....
 void fire_bullet(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int kick, int hspread, int vspread, int mod)
 {
     fire_lead(self, start, aimdir, damage, kick, TE_GUNSHOT, hspread, vspread, mod);
+	spawn_shellcasing(self, start, aimdir, 0);
 }
 
 
@@ -271,6 +330,7 @@ void fire_shotgun(edict_t *self, vec3_t start, vec3_t aimdir, int damage, int ki
 
     for (i = 0; i < count; i++)
         fire_lead(self, start, aimdir, damage, kick, TE_SHOTGUN, hspread, vspread, mod);
+	spawn_shellcasing(self, start, aimdir, 1);
 }
 
 

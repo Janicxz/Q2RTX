@@ -75,6 +75,13 @@ cvar_t  *sv_features;
 
 cvar_t  *sv_flaregun;
 
+cvar_t* sv_shellcasings;
+cvar_t* sv_shellcasings_time;
+cvar_t* sv_shellcasings_size;
+cvar_t* sv_shellcasings_speed;
+cvar_t* sv_shellcasings_volume;
+
+
 void SpawnEntities(const char *mapname, const char *entities, const char *spawnpoint);
 void ClientThink(edict_t *ent, usercmd_t *cmd);
 qboolean ClientConnect(edict_t *ent, char *userinfo);
@@ -175,6 +182,13 @@ void InitGame(void)
 	//   1 = spawn with the flare gun
 	//   2 = spawn with the flare gun and some grenades
 	sv_flaregun = gi.cvar("sv_flaregun", "2", 0);
+
+	// Shell casings feature
+	sv_shellcasings = gi.cvar("sv_shellcasings", "1", CVAR_ARCHIVE);
+	sv_shellcasings_size = gi.cvar("sv_shellcasings_size", "1", CVAR_ARCHIVE);
+	sv_shellcasings_speed = gi.cvar("sv_shellcasings_speed", "200", CVAR_ARCHIVE);
+	sv_shellcasings_time = gi.cvar("sv_shellcasings_time", "15", CVAR_ARCHIVE);
+	sv_shellcasings_volume = gi.cvar("sv_shellcasings_volume", "0.5", CVAR_ARCHIVE);
 
     // export our own features
     gi.cvar_forceset("g_features", va("%d", G_FEATURES));

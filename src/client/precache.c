@@ -322,6 +322,7 @@ void CL_SetSky(void)
 cvar_t* cvar_shaderballs;
 qhandle_t cl_dev_shaderballs = -1;
 #endif
+//qhandle_t cl_flashlight_model = -1;
 
 /*
 =================
@@ -346,6 +347,9 @@ void CL_PrepRefresh(void)
     CL_LoadState(LOAD_MODELS);
 
     CL_RegisterTEntModels();
+
+	//cl_flashlight_model = R_RegisterModel("models/items/quaddama/tris.md2");
+	//Com_Printf("Loaded the flashlight model\n");
 
 #if CL_RTX_SHADERBALLS
 	cvar_shaderballs = Cvar_Get("cl_shaderballs", "0", 0);

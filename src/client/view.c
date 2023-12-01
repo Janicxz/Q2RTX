@@ -49,6 +49,8 @@ static cvar_t   *cl_stats;
 #endif
 
 static cvar_t   *cl_adjustfov;
+static cvar_t	*cl_flashlight;
+static cvar_t	*cl_flashlight_strength;
 
 #if USE_DLIGHTS
 int         r_numdlights;
@@ -392,6 +394,10 @@ float V_CalcFov(float fov_x, float width, float height)
     return a;
 }
 
+static void cl_flashlight_changed(cvar_t *self)
+{
+	S_StartLocalSound("misc/talk1.wav");
+}
 
 /*
 ==================
@@ -399,12 +405,43 @@ V_RenderView
 
 ==================
 */
+//extern qhandle_t cl_flashlight_model;
+//entity_t flashlight_ent;
 void V_RenderView(void)
 {
     // an invalid frame will just use the exact previous refdef
     // we can't use the old frame if the video mode has changed, though...
     if (cl.frame.valid) {
         V_ClearScene();
+
+		// Add flashlight
+		if (cl_flashlight->integer)
+		{
+			vec3_t result;
+			vec3_t offset = { -8, 6, -5 };
+			vec3_t forward;
+			/*entity_t flashlight_ent = { 0 };
+
+			// add shadow casting model infront
+			if (cl_flashlight_model != -1)
+			{
+				//cl_flashlight_model = R_RegisterModel("models/items/quaddama/tris.md2");
+				flashlight_ent.model = cl_flashlight_model;
+				// RTX ignores alpha?
+				flashlight_ent.flags |= RF_TRANSLUCENT;
+				flashlight_ent.alpha = -1; // Entities with alpha "0" will have a default alpha value, and generally be fully visible. To explicitly set an entity to invisible, set the alpha to "-1".
+				//flashlight_ent.skin = cl_flashlight_model = R_RegisterSkin("models/items/quaddama/skin.pcx");
+				Com_Printf("Loaded the flashlight model (renderview)\n");
+			}
+			*/
+			AngleVectors(cl.refdef.viewangles, forward, NULL, NULL);
+			//vectoangles2(forward, flashlight_ent.angles);
+			VectorMA(cl.refdef.vieworg, 32, forward, result);
+			//VectorMA(cl.refdef.vieworg, 62, forward, flashlight_ent.origin);
+			//V_AddEntity(&flashlight_ent);
+
+			V_AddLightEx(result, 30.0f, 0.7f, 0.7f, 0.7f, (int)cl_flashlight_strength->integer);
+		}
 
         // build a refresh entity list and calc cl.sim*
         // this also calls CL_CalcViewValues which loads
@@ -555,6 +592,10 @@ void V_Init(void)
     cl_add_blend->changed = cl_add_blend_changed;
 
     cl_adjustfov = Cvar_Get("cl_adjustfov", "1", 0);
+
+	cl_flashlight = Cvar_Get("cl_flashlight", "0", 0);
+	cl_flashlight->changed = cl_flashlight_changed;
+	cl_flashlight_strength = Cvar_Get("cl_flashlight_strength", "6", 0);
 }
 
 void V_Shutdown(void)

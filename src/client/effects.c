@@ -446,7 +446,10 @@ void CL_MuzzleFlash(void)
 	if (vid_rtx->integer)
 	{
 		// don't add muzzle flashes in RTX mode
-		DL_RADIUS(0.f);
+		if (!vid_rtx_muzzleflash->integer)
+			DL_RADIUS(0.f);
+		else
+			DL_RADIUS(vid_rtx_muzzleflash_radius->integer);
 	}
 }
 

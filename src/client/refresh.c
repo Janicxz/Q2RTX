@@ -34,6 +34,8 @@ cvar_t      *vid_fullscreen;
 cvar_t      *_vid_fullscreen;
 cvar_t      *vid_display;
 cvar_t      *vid_displaylist;
+cvar_t		*vid_rtx_muzzleflash;
+cvar_t		*vid_rtx_muzzleflash_radius;
 
 #define MODE_GEOMETRY   1
 #define MODE_FULLSCREEN 2
@@ -313,6 +315,9 @@ void CL_InitRefresh(void)
 		"0",
 #endif
 		CVAR_REFRESH | CVAR_ARCHIVE);
+
+	vid_rtx_muzzleflash = Cvar_Get("vid_rtx_muzzleflash", "1", CVAR_ARCHIVE);
+	vid_rtx_muzzleflash_radius = Cvar_Get("vid_rtx_muzzleflash_radius", "6", CVAR_ARCHIVE);
 
     vid_fullscreen = Cvar_Get("vid_fullscreen", "0", CVAR_ARCHIVE);
     _vid_fullscreen = Cvar_Get("_vid_fullscreen", "1", CVAR_ARCHIVE);

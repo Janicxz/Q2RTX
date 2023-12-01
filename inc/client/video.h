@@ -21,6 +21,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #define VIDEO_H
 
 extern cvar_t       *vid_rtx;
+extern cvar_t* vid_rtx_muzzleflash;
+extern cvar_t* vid_rtx_muzzleflash_radius;
 extern cvar_t       *vid_geometry;
 extern cvar_t       *vid_modelist;
 extern cvar_t       *vid_fullscreen;
